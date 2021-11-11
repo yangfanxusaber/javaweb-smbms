@@ -7,6 +7,7 @@
          metadata-complete="true">
 
 <!--注册 字符编码 Filter-->
+  <!-- /* 对所有请求都过滤 -->
   <filter>
     <filter-name>CharacterEncodingFilter</filter-name>
     <filter-class>com.codeleopard.filter.CharacterEncodingFilter</filter-class>
@@ -14,6 +15,34 @@
   <filter-mapping>
     <filter-name>CharacterEncodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
-    <!-- /*对所有请求都过滤 -->
   </filter-mapping>
+  
+  <!--设置欢迎页面-->
+  <welcome-file-list>
+    <welcome-file>login.jsp</welcome-file>
+  </welcome-file-list>
+
+  <!--Servlet-->
+  <!--注册LoginServlet.class-->
+  <servlet>
+    <servlet-name>LoginServlet</servlet-name>
+    <servlet-class>com.codeleopard.servlet.user.LoginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LoginServlet</servlet-name>
+    <!--这里的名称要根据前端的来写-->
+    <url-pattern>/login.do</url-pattern>
+  </servlet-mapping>
+
+  <!--注册LogoutServlet.class-->
+  <servlet>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>com.codeleopard.servlet.user.LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LogoutServlet</servlet-name>
+    <url-pattern>/logout.do</url-pattern>
+  </servlet-mapping>
+
+
 </web-app>
