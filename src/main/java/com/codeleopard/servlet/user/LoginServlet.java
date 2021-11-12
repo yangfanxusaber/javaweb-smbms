@@ -21,14 +21,15 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("LoginServlet---start--->");
         // 获取用户名和密码（根据前端input标签上的name来写）
         String userCode = req.getParameter("userCode");
         String userPassword = req.getParameter("userPassword");
 
+        System.out.println("userCode: " + userCode + " userPassword: " + userPassword);
         // 和数据库中的密码进行对比，调用业务层
         UserService userService = new UserServiceImpl();
         User user = userService.login(userCode, userPassword);  //这里已经把登录的人给查出来了
+
         if(user != null){   // 查有此人，可以登录
             // 将用户的信息放到Session中
             req.getSession().setAttribute(Constants.USER_SESSION, user);

@@ -10,11 +10,11 @@
             <input type="hidden" name="method" value="savepwd"/>
             <!--div的class 为error是验证错误，ok是验证成功-->
             <div class="info">${message}</div>
-            <div class="">
-                <label for="oldPassword">旧密码：</label>
-                <input type="password" name="oldpassword" id="oldpassword" value="">
-                <font color="red"></font>
-            </div>
+<%--            <div class="">--%>
+<%--                <label for="oldPassword">旧密码：</label>--%>
+<%--                <input type="password" name="oldpassword" id="oldpassword" value="">--%>
+<%--                <font color="red"></font>--%>
+<%--            </div>--%>
             <div>
                 <label for="newPassword">新密码：</label>
                 <input type="password" name="newpassword" id="newpassword" value="">
@@ -34,4 +34,6 @@
 </div>
 </section>
 <%@include file="/jsp/common/foot.jsp" %>
-<script type="text/javascript" src="${pageContext.request.contextPath }/statics/js/pwdmodify.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/js/pwdmodify.js"></script>
+
+

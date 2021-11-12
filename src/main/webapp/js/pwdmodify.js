@@ -19,7 +19,9 @@ $(function(){
 			url:path+"/jsp/user.do",
 			data:{method:"pwdmodify",oldpassword:oldpassword.val()},
 			dataType:"json",
+
 			success:function(data){
+				console.log("data: " + data.result)
 				if(data.result == "true"){//旧密码正确
 					validateTip(oldpassword.next(),{"color":"green"},imgYes,true);
 				}else if(data.result == "false"){//旧密码输入不正确
@@ -32,10 +34,10 @@ $(function(){
 			},
 			error:function(data){
 				//请求出错
+				console.log('data.result', data.result);
 				validateTip(oldpassword.next(),{"color":"red"},imgNo + " 请求错误",false);
 			}
 		});
-
 
 	}).on("focus",function(){
 		validateTip(oldpassword.next(),{"color":"#666666"},"* 请输入原密码",false);
@@ -52,7 +54,6 @@ $(function(){
 		}
 	});
 
-
 	rnewpassword.on("focus",function(){
 		validateTip(rnewpassword.next(),{"color":"#666666"},"* 请输入与上面一致的密码",false);
 	}).on("blur",function(){
@@ -64,18 +65,16 @@ $(function(){
 		}
 	});
 
-
 	saveBtn.on("click",function(){
 		oldpassword.blur();
 		newpassword.blur();
 		rnewpassword.blur();
-		if(oldpassword.attr("validateStatus") == "true"
-			&& newpassword.attr("validateStatus") == "true"
-			&& rnewpassword.attr("validateStatus") == "true"){
+
+		// oldpassword.attr("validateStatus") == "true"
+		if(newpassword.attr("validateStatus") == "true" && rnewpassword.attr("validateStatus") == "true"){
 			if(confirm("确定要修改密码？")){
 				$("#userForm").submit();
 			}
 		}
-
 	});
 });

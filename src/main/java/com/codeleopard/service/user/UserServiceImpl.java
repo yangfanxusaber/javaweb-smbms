@@ -8,6 +8,7 @@ import org.junit.Test;
 
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class UserServiceImpl implements UserService{
 
@@ -24,9 +25,34 @@ public class UserServiceImpl implements UserService{
 
         connection = BaseDao.getConnection();
         // 通过业务层调用对应的具体的数据库操作
-        user = userDao.getLoginUser(connection, userCode);
+        try {
+            user = userDao.getLoginUser(connection, userCode);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         BaseDao.closeResource(connection, null, null);
         return user;
+    }
+
+    @Override
+    public boolean updatePwd(int id, String pwd) {
+        System.out.println("UserServiceImpl: " + pwd);
+
+        Connection connection = null;
+        boolean flag = false;
+
+        connection = BaseDao.getConnection();
+        // 修改密码
+        try {
+            if(userDao.updatePwd(connection, id, pwd) > 0){
+                flag = true;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }finally {
+            BaseDao.closeResource(connection, null, null);
+        }
+        return flag;
     }
 
 //    @Test

@@ -57,4 +57,4 @@
 </div>
 </section>
 <%@include file="/jsp/common/foot.jsp" %>
-<script type="text/javascript" src="${pageContext.request.contextPath }/statics/js/providermodify.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/js/providermodify.js"></script>
