@@ -1,5 +1,6 @@
 package com.codeleopard.servlet.user;
 
+import com.alibaba.fastjson.JSONArray;
 import com.codeleopard.pojo.User;
 import com.codeleopard.service.user.UserService;
 import com.codeleopard.service.user.UserServiceImpl;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
 // 实现servlet复用
 public class UserServlet extends HttpServlet {
@@ -19,6 +22,8 @@ public class UserServlet extends HttpServlet {
         String method = req.getParameter("method");
         if(method.equals("savepwd") && method!=null){
             this.updatePwd(req, resp);
+        }else if(method.equals("pwdmodify") && method!=null){
+            this.pwdModify(req, resp);
         }
     }
 
@@ -58,5 +63,35 @@ public class UserServlet extends HttpServlet {
         }
 
         req.getRequestDispatcher("pwdmodify.jsp").forward(req, resp);
+    }
+
+    // 验证旧密码 Session中有用户的密码
+    public void pwdModify(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // 从Session里面拿ID
+        Object o = req.getSession().getAttribute(Constants.USER_SESSION);
+        String oldpassword = req.getParameter("oldpassword");
+
+        // 万能的map：结果集
+        HashMap<String, String> resultMap = new HashMap<>();
+        //  Session失效了或者过期了
+        if(o == null){
+            resultMap.put("result", "SessionError");
+        }else if(StringUtils.isNullOrEmpty(oldpassword)){   // 输入的密码为空
+            resultMap.put("result", "error");
+        }else{
+            String userPassword = ((User) o).getUserPassword();
+            if(oldpassword.equals(userPassword)){
+                resultMap.put("result", "true");
+            }else{
+                resultMap.put("result", "false");
+            }
+        }
+
+        resp.setContentType("application/json");
+        PrintWriter writer = resp.getWriter();
+        // JSONArray 阿里巴巴的工具类，转换格式。
+        writer.write(JSONArray.toJSONString(resultMap));
+        writer.flush();
+        writer.close();
     }
 }
