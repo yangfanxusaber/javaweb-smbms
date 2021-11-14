@@ -2,11 +2,14 @@ package com.codeleopard.dao.user;
 
 import com.codeleopard.dao.BaseDao;
 import com.codeleopard.pojo.User;
+import com.mysql.cj.util.StringUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDaoImpl implements UserDao{
     // 得到当前用户
@@ -65,5 +68,49 @@ public class UserDaoImpl implements UserDao{
             }
         }
         return execute;
+    }
+
+    // 根据用户名或者角色来查询当前用户总数
+    @Override
+    public int getUserCount(Connection connection, String userName, int userRole) throws Exception {
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+        int count = 0;
+
+        if(connection != null){
+            StringBuffer sql = new StringBuffer();
+            sql.append("select count(1) as count from smbms_user u, smbms_role r where u.userRole = r.id");
+
+            ArrayList<Object> list = new ArrayList<Object>();// 存放我们的参数
+
+            if(!StringUtils.isNullOrEmpty(userName)){
+
+                sql.append(" and u.userName like ?");
+                list.add("%" + userName + "%"); //list下标默认从0开始
+            }
+
+            if(userRole>0){
+                sql.append(" and u.userRole = ?");
+                list.add(userRole);
+            }
+
+            // 怎么把list转换成数组
+            Object[] params = list.toArray();
+            System.out.println("UserDaoImpl->getUserCount: " + sql.toString()); // 输出最后完整的sql语句
+
+            rs = BaseDao.execute(connection, pstm, rs, sql.toString(), params);
+            if(rs.next()){
+                count = rs.getInt("count"); // 从结果集中获得的最终的数量
+            }
+
+            BaseDao.closeResource(null, pstm, rs);
+        }
+        return count;
+    }
+
+    // 通过条件查询userList
+    @Override
+    public List<User> getUserList(Connection connection, String userName, int userRole, int currentPageNo, int pageSize) throws Exception {
+        return null;
     }
 }
