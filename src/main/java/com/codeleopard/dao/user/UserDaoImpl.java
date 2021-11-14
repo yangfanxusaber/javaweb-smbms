@@ -1,6 +1,7 @@
 package com.codeleopard.dao.user;
 
 import com.codeleopard.dao.BaseDao;
+import com.codeleopard.pojo.Role;
 import com.codeleopard.pojo.User;
 import com.mysql.cj.util.StringUtils;
 
@@ -110,7 +111,54 @@ public class UserDaoImpl implements UserDao{
 
     // 通过条件查询userList
     @Override
-    public List<User> getUserList(Connection connection, String userName, int userRole, int currentPageNo, int pageSize) throws Exception {
-        return null;
+    public List<User> getUserList(Connection connection, String userName, int userRole, int currentPageNo, int pageSize)
+            throws Exception {
+        // TODO Auto-generated method stub
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+        List<User> userList = new ArrayList<User>();
+        if(connection != null){
+            StringBuffer sql = new StringBuffer();
+            sql.append("select u.*,r.roleName as userRoleName from smbms_user u,smbms_role r where u.userRole = r.id");
+            List<Object> list = new ArrayList<Object>();
+            if(!StringUtils.isNullOrEmpty(userName)){
+                sql.append(" and u.userName like ?");
+                list.add("%"+userName+"%");
+            }
+            if(userRole > 0){
+                sql.append(" and u.userRole = ?");
+                list.add(userRole);
+            }
+
+            //在数据库中，分页使用 limit startIndex pageSize
+            //当前页  （当前页-1）*页面大小
+            //0,5    1   0    012345
+            //6,5    2   5    26789
+            //11,5   3   10
+            sql.append(" order by creationDate DESC limit ?,?");
+            currentPageNo = (currentPageNo-1)*pageSize;
+            list.add(currentPageNo);
+            list.add(pageSize);
+
+            Object[] params = list.toArray();
+            System.out.println("sql ----> " + sql.toString());
+            rs = BaseDao.execute(connection, pstm, rs, sql.toString(), params);
+            while(rs.next()){
+                User _user = new User();
+                _user.setId(rs.getInt("id"));
+                _user.setUserCode(rs.getString("userCode"));
+                _user.setUserName(rs.getString("userName"));
+                _user.setGender(rs.getInt("gender"));
+                _user.setBirthday(rs.getDate("birthday"));
+                _user.setPhone(rs.getString("phone"));
+                _user.setUserRole(rs.getInt("userRole"));
+                _user.setUserRoleName(rs.getString("userRoleName"));
+                userList.add(_user);
+            }
+            BaseDao.closeResource(null, pstm, rs);
+        }
+        return userList;
     }
+
+    // Fine thing
 }
